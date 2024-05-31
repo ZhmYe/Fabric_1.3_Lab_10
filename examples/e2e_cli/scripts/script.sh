@@ -160,7 +160,7 @@ installChaincode () {
 	PEER=$1
 	ORG=$2
 	setGlobals $PEER $ORG
-	peer chaincode install -n mycc -v 1.0 -l go -p github.com/hyperledger/fabric/examples/chaincode/go/smallbank/cmd >&log.txt
+	peer chaincode install -n mycc -v 1.0 -l golang -p github.com/hyperledger/fabric/examples/chaincode/go/smallbank/cmd >&log.txt
 	res=$?
 	cat log.txt
 	verifyResult $res "Chaincode installation on peer peer${PEER}.org${ORG} has Failed"
@@ -186,36 +186,36 @@ instantiateChaincode () {
 	echo
 }
 
-#chaincodeQuery () {
-#	PEER=$1
-#	ORG=$2
-#	setGlobals $PEER $ORG
-#	EXPECTED_RESULT=$3
-#	echo "===================== Querying on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME'... ===================== "
-#	local rc=1
-#	local starttime=$(date +%s)
-#
-#	# continue to poll
-#	# we either get a successful response, or reach TIMEOUT
-#	while test "$(($(date +%s)-starttime))" -lt "$TIMEOUT" -a $rc -ne 0
-#	do
-#        	sleep 3
-#        	echo "Attempting to Query peer${PEER}.org${ORG} ...$(($(date +%s)-starttime)) secs"
-#        	peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}' >&log.txt
-#        	test $? -eq 0 && VALUE=$(cat log.txt | egrep '^[0-9]+$')
-#        	test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
-#	done
-#	echo
-#	cat log.txt
-#	if test $rc -eq 0 ; then
-#		echo "===================== Query successful on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' ===================== "
-#    	else
-#		echo "!!!!!!!!!!!!!!! Query result on peer${PEER}.org${ORG} is INVALID !!!!!!!!!!!!!!!!"
-#        	echo "================== ERROR !!! FAILED to execute End-2-End Scenario =================="
-#		echo
-#		exit 1
-#    	fi
-#}
+chaincodeQuery () {
+	PEER=$1
+	ORG=$2
+	setGlobals $PEER $ORG
+	EXPECTED_RESULT=$3
+	echo "===================== Querying on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME'... ===================== "
+	local rc=1
+	local starttime=$(date +%s)
+
+	# continue to poll
+	# we either get a successful response, or reach TIMEOUT
+	while test "$(($(date +%s)-starttime))" -lt "$TIMEOUT" -a $rc -ne 0
+	do
+        	sleep 3
+        	echo "Attempting to Query peer${PEER}.org${ORG} ...$(($(date +%s)-starttime)) secs"
+        	peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}' >&log.txt
+        	test $? -eq 0 && VALUE=$(cat log.txt | egrep '^[0-9]+$')
+        	test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
+	done
+	echo
+	cat log.txt
+	if test $rc -eq 0 ; then
+		echo "===================== Query successful on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' ===================== "
+    	else
+		echo "!!!!!!!!!!!!!!! Query result on peer${PEER}.org${ORG} is INVALID !!!!!!!!!!!!!!!!"
+        	echo "================== ERROR !!! FAILED to execute End-2-End Scenario =================="
+		echo
+		exit 1
+    	fi
+}
 
 # parsePeerConnectionParameters $@
 # Helper function that takes the parameters from a chaincode operation
